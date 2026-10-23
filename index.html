@@ -92,7 +92,34 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .ch .bs{font-size:.85rem;font-weight:700;color:var(--gold-ink);font-variant-numeric:tabular-nums;margin-top:4px}
 h3.sec{margin:0;font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
 
-@media (max-width:520px){ #hint{display:none} #pad{justify-content:center} #pad .btn{flex:1;width:auto} .stats{gap:10px} }
+button,.btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{overscroll-behavior:none}
+.mini{white-space:nowrap}
+@media (max-width:520px){
+  #hint,.brand{display:none}
+  #app{gap:8px;padding-block:8px}
+  #hud{flex-wrap:nowrap}
+  .stats{width:100%;justify-content:space-between;gap:8px;font-size:.95rem}
+  .hearts{font-size:1rem;letter-spacing:1px}
+  .stat-label{font-size:.68rem;margin-right:3px}
+  .mini{padding:4px 9px;font-size:.8rem}
+  #qbar{min-height:0;padding:8px 12px}
+  #qmeta{font-size:.68rem}
+  #qtext{font-size:1.05rem}
+  #pad{justify-content:center} #pad .btn{flex:1;width:auto;padding:12px 0}
+  .card{padding:14px} .card h2{font-size:1.35rem} .card p{font-size:1rem}
+  .menu-in h1{font-size:2.5rem} .lead{font-size:1.05rem}
+}
+@media (max-height:520px){
+  .brand,#hint,#qmeta{display:none}
+  #app{gap:6px;padding-block:6px}
+  #qbar{min-height:0;padding:5px 10px} #qtext{font-size:.95rem;margin:0}
+  #stage{min-height:150px}
+  #pad .btn{padding:6px 0;width:56px} .card{padding:10px} .card p{font-size:.9rem;margin:3px 0}
+}
+html,body{overscroll-behavior:none}
+#app{padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+@supports(height:100dvh){html,body,#app{height:100dvh}}
 @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto!important} }
 html,body{margin:0}
 [hidden]{display:none!important}
@@ -107,7 +134,7 @@ html,body{margin:0}
       <span id="hearts" class="hearts" aria-label="Lives"></span>
       <span><span class="stat-label">Score</span><span id="score">0</span></span>
       <span><span class="stat-label">Popes</span><span id="popes">0</span></span>
-      <button class="mini" id="snd" type="button">Sound on</button>
+      <button class="mini" id="snd" type="button">Sound</button>
       <button class="mini" id="menuBtn" type="button">Menu</button>
     </div>
   </header>
@@ -301,7 +328,7 @@ function nextQuestion(){
  const gi=G.chapter*PER+G.qi,q=Q[gi];
  const opts=shuffle([{t:q.ok,ok:true}].concat(q.bad.map(t=>({t,ok:false}))));
  G.q=q;G.speed=clamp(W*.3,190,280)+G.chapter*6;
- const px=PX(),sp=G.speed,gw=Math.min(W*.64,320),gx=Math.max(px+80,W-gw-8),lead=PACES[pace].lead;
+ const px=PX(),sp=G.speed,gw=Math.min(W*(W<520?.5:.64),320),gx=Math.max(px+80,W-gw-8),lead=PACES[pace].lead;
  // the four answers wait at the end of the lanes from the start and drift toward the runner
  G.gate={x:gx,w:gw,v:(gx-px-8)/lead,opts,state:'run',picked:-1};
  G.ents=[];
@@ -574,7 +601,7 @@ cv.addEventListener('pointerup',e=>{if(ptY===null)return;const dy=e.clientY-ptY;
  if(Math.abs(dy)>28){setLane(G.player.lane+(dy>0?1:-1));}
  else{const r=cv.getBoundingClientRect(),y=e.clientY-r.top;if(y>skyH)setLane(Math.floor((y-skyH)/laneH));}});
 cv.addEventListener('pointercancel',()=>{ptY=null;});
-$('#snd').onclick=()=>{sndPref=!sndPref;soundOn=sndPref;$('#snd').textContent=sndPref?'Sound on':'Sound off';};
+$('#snd').onclick=()=>{sndPref=!sndPref;soundOn=sndPref;$('#snd').textContent=sndPref?'Sound':'Muted';};
 $('#menuBtn').onclick=showMenu;
 $('#runAll').onclick=()=>{soundOn=sndPref;startRun(0,true);};
 new MutationObserver(readTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
